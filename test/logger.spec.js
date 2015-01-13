@@ -63,4 +63,29 @@ describe('logger', function () {
 			childLogger.log('A log message');
 		});
 	});
+	describe('useable as a mixin', function () {
+		it('should be able to augment a normal class with Logger capabilities', function (done) {
+			function SomeClient() {
+				Logger.augment(this, 'SomeClient');
+			}
+
+			SomeClient.prototype.getSome = function (thing) {
+				this.log('Served some: ' + thing);
+				return thing;
+			};
+
+			var someClient = new SomeClient();
+
+			someClient.on('log', function (e) {
+				expect(e, 'to equal', {
+					namespace: 'SomeClient',
+					type: 'log',
+					message: 'Served some: foo'
+				});
+				done();
+			});
+
+			someClient.getSome('foo');
+		});
+	});
 });

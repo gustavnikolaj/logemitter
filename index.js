@@ -4,6 +4,12 @@ function Logger(namespace) {
 	this.namespace = namespace;
 }
 
+Logger.augment = function (object, namespace) {
+	object._logger = new Logger(namespace);
+	object.log = Logger.prototype.log.bind(object._logger);
+	object.on = Logger.prototype.on.bind(object._logger);
+};
+
 Logger.prototype = Object.create(EventEmitter.prototype);
 
 Logger.prototype.log = function (message) {
