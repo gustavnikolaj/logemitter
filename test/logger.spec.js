@@ -24,4 +24,20 @@ describe('logger', function () {
 		});
 		logger.log('logMessage')
 	});
+	it('should take a namespace as the argument', function () {
+		var logger = new Logger('theNamespace');
+		expect(logger, 'to have property', 'namespace', 'theNamespace')
+	});
+	it('should emit events with namespaces', function (done) {
+		var logger = new Logger('theNamespace');
+		logger.on('log', function (e) {
+			expect(e, 'to equal', {
+				type: 'log',
+				namespace: 'theNamespace',
+				message: 'message'
+			});
+			done();
+		});
+		logger.log('message');
+	});
 });
