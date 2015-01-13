@@ -7,17 +7,11 @@ describe('logger', function () {
 	});
 	it('should be able to subscribe to an event', function (done) {
 		var logger = new Logger();
-		logger.on('log', function (e) {
-			expect(e, 'to equal', {
-				type: 'eventType',
-				message: 'eventMessage'
-			});
+		logger.on('someEvent', function (e) {
+			expect(e, 'to equal', 'someThing');
 			done();
 		});
-		logger.emit('log', {
-			type: 'eventType',
-			message: 'eventMessage'
-		});
+		logger.emit('someEvent', 'someThing');
 	});
 	it('should have a method called log that emits log events', function (done) {
 		var logger = new Logger();
