@@ -14,4 +14,17 @@ Logger.prototype.log = function (message) {
 	})
 };
 
+Logger.prototype.getNewLogger = function (namespace) {
+	var child = new Logger(this.namespace + '.' + namespace);
+	var originalChildEmit = child.emit;
+	var that = this;
+
+	child.emit = function () {
+		that.emit.apply(that, arguments);
+		return originalChildEmit.apply(this, arguments);
+	};
+
+	return child;
+};
+
 module.exports = Logger;

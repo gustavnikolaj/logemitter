@@ -40,4 +40,27 @@ describe('logger', function () {
 		});
 		logger.log('message');
 	});
+	describe('sub instances', function () {
+		it('should be able to create sub instances', function () {
+			var parentLogger = new Logger('Parent');
+			var childLogger = parentLogger.getNewLogger('Child');
+
+			expect(childLogger, 'to have property', 'namespace', 'Parent.Child');
+		});
+		it('should relay events to the parent', function (done) {
+			var parentLogger = new Logger('Parent');
+			var childLogger = parentLogger.getNewLogger('Child');
+
+			parentLogger.on('log', function (e) {
+				expect(e, 'to equal', {
+					type: 'log',
+					namespace: 'Parent.Child',
+					message: 'A log message'
+				});
+				done();
+			});
+
+			childLogger.log('A log message');
+		});
+	});
 });
