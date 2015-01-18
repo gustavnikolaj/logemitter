@@ -26,5 +26,29 @@ describe('logemitter', function () {
                 done();
             }, 1);
         });
+        it('should relay matched events from one EventEmitter to another', function (done) {
+            var someListenerSpy = sinon.spy();
+            var anotherListenerSpy = sinon.spy();
+            var negativeListenerSpy = sinon.spy();
+            var firstEmitter = new EventEmitter();
+            var secondEmitter = new EventEmitter();
+
+            firstEmitter.on('someEvent', someListenerSpy);
+            firstEmitter.on('anotherEvent', anotherListenerSpy);
+            firstEmitter.on('negativeEvent', negativeListenerSpy);
+
+            relayEvents(/(some|another)Event/, firstEmitter, secondEmitter);
+
+            secondEmitter.emit('someEvent', 'someMessage');
+            secondEmitter.emit('anotherEvent', 'anotherMessage');
+            secondEmitter.emit('negativeEvent', 'negativeMessage');
+
+            setTimeout(function () {
+                expect(someListenerSpy, 'was called with', 'someMessage');
+                expect(anotherListenerSpy, 'was called with', 'anotherMessage');
+                expect(negativeListenerSpy, 'was not called');
+                done();
+            }, 1);
+        });
     });
 });
