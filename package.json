@@ -10,6 +10,8 @@
   "license": "ISC",
   "devDependencies": {
     "mocha": "2.1.0",
-    "unexpected": "5.2.0"
+    "sinon": "1.12.2",
+    "unexpected": "5.5.0",
+    "unexpected-sinon": "5.0.0"
   }
 }
