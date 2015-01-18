@@ -12,6 +12,7 @@ describe('logemitter', function () {
         });
         it('should relay events from one EventEmitter to another', function (done) {
             var listenerSpy = sinon.spy();
+            var anotherListenerSpy = sinon.spy();
             var firstEmitter = new EventEmitter();
             var secondEmitter = new EventEmitter();
 
@@ -20,9 +21,11 @@ describe('logemitter', function () {
             relayEvents('someEvent', firstEmitter, secondEmitter);
 
             secondEmitter.emit('someEvent', 'someMessage');
+            secondEmitter.emit('anotherEvent', 'anotherMessage');
 
             setTimeout(function () {
                 expect(listenerSpy, 'was called with', 'someMessage');
+                expect(anotherListenerSpy, 'was not called');
                 done();
             }, 1);
         });
