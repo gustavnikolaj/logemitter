@@ -53,5 +53,21 @@ describe('logemitter', function () {
                 done();
             }, 1);
         });
+        it('should relay everything', function () {
+            var listenerSpy = sinon.spy();
+            var firstEmitter = new EventEmitter();
+            var secondEmitter = new EventEmitter();
+
+            firstEmitter.on('someEvent', listenerSpy);
+
+            relayEvents('*', firstEmitter, secondEmitter);
+
+            secondEmitter.emit('someEvent', 'someMessage');
+
+            setTimeout(function () {
+                expect(listenerSpy, 'was called with', 'someMessage');
+                done();
+            }, 1);
+        });
     });
 });
