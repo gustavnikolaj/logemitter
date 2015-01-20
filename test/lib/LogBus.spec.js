@@ -21,18 +21,41 @@ describe('LogBus', function () {
             done();
         }, 1);
     });
-    it.skip('should allow you to read a stream of events from a query', function () {
+    it('should allow you to read a stream of events from a query', function (done) {
         var logBus = new LogBus();
+        var streamSpy = sinon.spy();
 
-        var stream = logBus.streamQuery({ query: 'foobar' });
+        var stream = logBus.stream({ type: 'log' });
 
-        // buffer events from stream
+        var events = [];
 
-        logBus.emit('log', 'event that match the query');
-        logBus.emit('log', 'event that match the query');
-        logBus.emit('log', 'event that match the query');
+        stream.on('data', streamSpy);
 
-        expect('buffered result', 'to equal', 'expected result, stringified event as json one per line');
+        logBus.emit('log', { type: 'log', message: 'Foo' });
+        logBus.emit('log', { type: 'log', message: 'Bar' });
+        logBus.emit('log', { type: 'log', message: 'Baz' });
+
+        setTimeout(function () {
+            expect(streamSpy, 'was called thrice');
+            expect(streamSpy, 'was called with', { type: 'log', message: 'Foo' });
+            expect(streamSpy, 'was called with', { type: 'log', message: 'Bar' });
+            expect(streamSpy, 'was called with', { type: 'log', message: 'Baz' });
+            stream.close();
+            done();
+        }, 1);
+    });
+    it('should handle adding and removing streams from the subscriptions array', function (done) {
+        var logBus = new LogBus();
+        expect(logBus.subscriptions, 'to have length', 0);
+
+        var stream = logBus.stream({ type: 'log' });
+        expect(logBus.subscriptions, 'to have length', 1);
+
+        stream.close();
+        setTimeout(function () {
+            expect(logBus.subscriptions, 'to have length', 0);
+            done();
+        });
     });
     it.skip('map non log events to log', function () {
         var logBus = new LogBus();
