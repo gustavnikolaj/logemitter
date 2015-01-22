@@ -4,12 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "coverage": "NODE_ENV=development istanbul cover -x --include-all-sources _mocha -- --reporter dot",
     "lint": "jshint . && jscs .",
     "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "istanbul": "0.3.5",
     "jscs": "1.10.0",
     "jshint": "2.6.0",
     "mocha": "2.1.0",
