@@ -1,0 +1,3 @@
+# logemitter
+
+To be documented...
