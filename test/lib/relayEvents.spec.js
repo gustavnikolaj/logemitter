@@ -1,3 +1,4 @@
+/*global describe, it*/
 var sinon = require('sinon');
 var expect = require('unexpected')
     .installPlugin(require('unexpected-sinon'));
