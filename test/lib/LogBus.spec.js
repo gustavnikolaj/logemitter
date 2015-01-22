@@ -1,3 +1,4 @@
+/*global describe, it*/
 var LogBus = require('../../lib/LogBus');
 var sinon = require('sinon');
 var expect = require('unexpected')
@@ -27,8 +28,6 @@ describe('LogBus', function () {
 
         var stream = logBus.stream({ type: 'log' });
 
-        var events = [];
-
         stream.on('data', streamSpy);
 
         logBus.emit('log', { type: 'log', message: 'Foo' });
@@ -57,7 +56,7 @@ describe('LogBus', function () {
             done();
         });
     });
-    it.skip('map non log events to log', function () {
+    it.skip('map non log events to log', function (done) {
         var logBus = new LogBus();
         var subscribeSpy = sinon.spy();
 
