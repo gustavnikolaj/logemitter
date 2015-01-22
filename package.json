@@ -4,11 +4,14 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "lint": "jshint . && jscs .",
     "test": "mocha"
   },
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "jscs": "1.10.0",
+    "jshint": "2.6.0",
     "mocha": "2.1.0",
     "sinon": "1.12.2",
     "unexpected": "5.5.0",
