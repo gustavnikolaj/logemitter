@@ -8,7 +8,7 @@
     "lint": "jshint . && jscs .",
     "test": "mocha"
   },
-  "author": "",
+  "author": "Gustav Nikolaj Olsen <gustavnikolaj@gmail.com>",
   "license": "ISC",
   "devDependencies": {
     "istanbul": "0.3.5",
