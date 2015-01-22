@@ -15,12 +15,12 @@ describe('LogBus', function () {
         logBus.emit('log', { type: 'metric', message: 'bar' });
         logBus.emit('log', { type: 'log', message: 'qux' });
 
-        setTimeout(function () {
+        setImmediate(function () {
             expect(subscribeSpy, 'was called twice');
             expect(subscribeSpy, 'was called with', { type: 'log', message: 'foo' });
             expect(subscribeSpy, 'was called with', { type: 'log', message: 'qux' });
             done();
-        }, 1);
+        });
     });
     it('should allow you to read a stream of events from a query', function (done) {
         var logBus = new LogBus();
@@ -34,14 +34,14 @@ describe('LogBus', function () {
         logBus.emit('log', { type: 'log', message: 'Bar' });
         logBus.emit('log', { type: 'log', message: 'Baz' });
 
-        setTimeout(function () {
+        setImmediate(function () {
             expect(streamSpy, 'was called thrice');
             expect(streamSpy, 'was called with', { type: 'log', message: 'Foo' });
             expect(streamSpy, 'was called with', { type: 'log', message: 'Bar' });
             expect(streamSpy, 'was called with', { type: 'log', message: 'Baz' });
             stream.close();
             done();
-        }, 1);
+        });
     });
     it('should handle adding and removing streams from the subscriptions array', function (done) {
         var logBus = new LogBus();
@@ -51,7 +51,7 @@ describe('LogBus', function () {
         expect(logBus.subscriptions, 'to have length', 1);
 
         stream.close();
-        setTimeout(function () {
+        setImmediate(function () {
             expect(logBus.subscriptions, 'to have length', 0);
             done();
         });
