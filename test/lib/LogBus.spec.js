@@ -56,22 +56,36 @@ describe('LogBus', function () {
             done();
         });
     });
-    it.skip('map non log events to log', function (done) {
+    it('should map string events to object events', function (done) {
         var logBus = new LogBus();
         var subscribeSpy = sinon.spy();
 
         logBus.subscribe({ type: 'log' }, subscribeSpy);
 
         logBus.emit('log', 'foo');
+
+        setImmediate(function () {
+            expect(subscribeSpy, 'was called once');
+            expect(subscribeSpy, 'was called with', { type: 'log', message: 'foo' });
+            done();
+        });
+    });
+    it('should map non log events to log', function (done) {
+        var logBus = new LogBus();
+        var subscribeSpy = sinon.spy();
+
+        logBus.on('log', subscribeSpy);
+
+        logBus.emit('log', 'foo');
         logBus.emit('metric', 'bar');
         logBus.emit('log', 'qux');
 
-        setTimeout(function () {
+        setImmediate(function () {
             expect(subscribeSpy, 'was called thrice');
             expect(subscribeSpy, 'was called with', { type: 'log', message: 'foo' });
             expect(subscribeSpy, 'was called with', { type: 'metric', message: 'bar' });
             expect(subscribeSpy, 'was called with', { type: 'log', message: 'qux' });
             done();
-        }, 1);
+        });
     });
 });
