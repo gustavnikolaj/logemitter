@@ -54,4 +54,25 @@ describe('LogBus', function () {
             done();
         });
     });
+    it('should return a subscription id when subscribing', function () {
+        var logBus = new LogBus();
+
+        var subscriptionId = logBus.subscribe('foo', 'bar');
+
+        expect(subscriptionId, 'to be a number');
+    });
+
+    it('should be able to subscribe and unsubscribe', function () {
+        var logBus = new LogBus();
+
+        expect(logBus.subscriptions, 'to equal', Object.create(null));
+
+        var subscription = logBus.subscribe('foo', 'bar');
+
+        expect(logBus.subscriptions[subscription], 'to be an object');
+
+        logBus.unsubscribe(subscription);
+
+        expect(logBus.subscriptions, 'to equal', Object.create(null));
+    });
 });
