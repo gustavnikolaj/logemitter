@@ -68,4 +68,24 @@ describe('augmentFunctionWithEventEmitter', function () {
             done();
         });
     });
+    it.skip('should allow relayEvents to overwrite the augmented emit method', function (done) {
+        var logBus = new LogBus();
+        var logSpy = sinon.spy();
+
+        var method = augmentFunctionWithEventEmitter(function () {
+            this.emit('foo', 'bar');
+        });
+
+        relayEvents('*', logBus, method); // Subscribing to all events will wrap emit
+
+        logBus.subscribe({ type: 'foo' }, logSpy);
+
+        method();
+
+        setImmediate(function () {
+            expect(logSpy, 'was called once');
+            expect(logSpy, 'was called with', { type: 'foo', message: 'bar' });
+            done();
+        });
+    });
 });
