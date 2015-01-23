@@ -65,14 +65,20 @@ describe('LogBus', function () {
     it('should be able to subscribe and unsubscribe', function () {
         var logBus = new LogBus();
 
-        expect(logBus.subscriptions, 'to equal', Object.create(null));
+        expect(logBus.subscriptions, 'to have length', 0);
 
-        var subscription = logBus.subscribe('foo', 'bar');
+        var subscription = logBus.subscribe({ type: 'foo' }, function () {});
 
-        expect(logBus.subscriptions[subscription], 'to be an object');
+        expect(logBus.subscriptions, 'to satisfy', [
+            {
+                subscriptionId: expect.it('to be a number'),
+                matcher: expect.it('to be a function'),
+                callback: expect.it('to be a function')
+            }
+        ]);
 
         logBus.unsubscribe(subscription);
 
-        expect(logBus.subscriptions, 'to equal', Object.create(null));
+        expect(logBus.subscriptions, 'to have length', 0);
     });
 });
