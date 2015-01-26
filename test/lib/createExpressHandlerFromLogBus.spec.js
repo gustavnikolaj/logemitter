@@ -25,7 +25,7 @@ describe('createExpressHandlerFromLogBus', function () {
         expect(expressHandler, 'to be a function');
         expect(expressHandler, 'to have arity', 3);
     });
-    it('when called with query ', function (done) {
+    it('when called with query #1', function (done) {
         var logBus = new LogBus();
         setImmediate(function () {
             logBus.emit('log', { type: 'log', message: 'message 1' });
@@ -52,7 +52,7 @@ describe('createExpressHandlerFromLogBus', function () {
             ].join('\n')
         }, done);
     });
-    it('when called with query ', function (done) {
+    it('when called with query #2', function (done) {
         var logBus = new LogBus();
         setImmediate(function () {
             logBus.emit('log', { type: 'log', message: 'message 1' });
