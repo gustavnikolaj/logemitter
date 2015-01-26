@@ -68,7 +68,7 @@ describe('augmentFunctionWithEventEmitter', function () {
             done();
         });
     });
-    it.skip('should allow relayEvents to overwrite the augmented emit method', function (done) {
+    it('should allow relayEvents to overwrite the augmented emit method', function (done) {
         var logBus = new LogBus();
         var logSpy = sinon.spy();
 
