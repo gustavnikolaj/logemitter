@@ -88,4 +88,66 @@ describe('augmentFunctionWithEventEmitter', function () {
             done();
         });
     });
+    describe('should add convenience methods', function () {
+        var listenerSpy;
+        beforeEach(function () {
+            listenerSpy = sinon.spy();
+        });
+        it('.log(message)', function () {
+            var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                this.log('hello this is a log message');
+            });
+            augmentedFunction.on('log', listenerSpy);
+            augmentedFunction();
+
+            expect(listenerSpy, 'was called once');
+            expect(listenerSpy, 'was called with', {
+                type: 'log',
+                severity: 'log',
+                message: 'hello this is a log message'
+            });
+        });
+        it('.info(message)', function () {
+            var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                this.info('this is info foobar');
+            });
+            augmentedFunction.on('log', listenerSpy);
+            augmentedFunction();
+
+            expect(listenerSpy, 'was called once');
+            expect(listenerSpy, 'was called with', {
+                type: 'log',
+                severity: 'info',
+                message: 'this is info foobar'
+            });
+        });
+        it('.debug(message)', function () {
+            var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                this.debug('this is debug foobar');
+            });
+            augmentedFunction.on('log', listenerSpy);
+            augmentedFunction();
+
+            expect(listenerSpy, 'was called once');
+            expect(listenerSpy, 'was called with', {
+                type: 'log',
+                severity: 'debug',
+                message: 'this is debug foobar'
+            });
+        });
+        it('.error(message)', function () {
+            var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                this.error('this is error foobar');
+            });
+            augmentedFunction.on('log', listenerSpy);
+            augmentedFunction();
+
+            expect(listenerSpy, 'was called once');
+            expect(listenerSpy, 'was called with', {
+                type: 'log',
+                severity: 'error',
+                message: 'this is error foobar'
+            });
+        });
+    });
 });
