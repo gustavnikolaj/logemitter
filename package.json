@@ -11,6 +11,7 @@
   "author": "Gustav Nikolaj Olsen <gustavnikolaj@gmail.com>",
   "license": "ISC",
   "devDependencies": {
+    "async": "0.9.0",
     "express": "4.11.1",
     "istanbul": "0.3.5",
     "jscs": "1.10.0",
@@ -20,5 +21,9 @@
     "unexpected": "5.7.0",
     "unexpected-express": "4.3.0",
     "unexpected-sinon": "5.0.0"
+  },
+  "dependencies": {
+    "byline": "4.1.1",
+    "request": "2.51.0"
   }
 }

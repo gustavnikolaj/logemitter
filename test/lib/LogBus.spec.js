@@ -3,6 +3,7 @@ var LogBus = require('../../lib/LogBus');
 var sinon = require('sinon');
 var expect = require('unexpected')
     .installPlugin(require('unexpected-sinon'));
+var async = require('async');
 
 describe('LogBus', function () {
     it('should allow you to subscribe to events by a query', function (done) {
@@ -80,5 +81,55 @@ describe('LogBus', function () {
         logBus.unsubscribe(subscription);
 
         expect(logBus.subscriptions, 'to have length', 0);
+    });
+    describe('relaying events from another logbus via http', function () {
+        function createExpressApp(middleware) {
+            var app = require('express')();
+            app.use('/log', middleware);
+            var server = app.listen(0);
+            var address = server.address();
+            return {
+                hostname: address.address,
+                port: address.port,
+                host: address.address + ':' + address.port,
+                url: 'http://' + address.address + ':' + address.port,
+                app: app
+            };
+        }
+
+        it('should be able to relay events via http', function (done) {
+            var masterLogBus = new LogBus();
+            var listenerSpy = sinon.spy();
+
+            var workerOneLogBus = new LogBus();
+            var workerTwoLogBus = new LogBus();
+
+            var workerOne = createExpressApp(workerOneLogBus.createExpressHandler());
+            var workerTwo = createExpressApp(workerTwoLogBus.createExpressHandler());
+
+            masterLogBus.subscribe({ type: 'log' }, listenerSpy);
+
+            async.waterfall([
+                function (callback) {
+                    masterLogBus.fetchEventsFromHttp({ url: workerOne.url + '/log' });
+                    masterLogBus.fetchEventsFromHttp({ url: workerTwo.url + '/log' });
+                    setTimeout(callback, 10);
+                },
+                function (callback) {
+                    workerOneLogBus.emit('log', 'worker 1');
+                    workerOneLogBus.emit('metric', 'worker 1');
+                    workerTwoLogBus.emit('log', 'worker 2 event 1');
+                    workerTwoLogBus.emit('log', 'worker 2 event 2');
+                    setTimeout(callback, 5);
+                },
+                function (callback) {
+                    expect(listenerSpy, 'was called thrice');
+                    expect(listenerSpy, 'was called with', { type: 'log', message: 'worker 1' });
+                    expect(listenerSpy, 'was called with', { type: 'log', message: 'worker 2 event 1' });
+                    expect(listenerSpy, 'was called with', { type: 'log', message: 'worker 2 event 2' });
+                    callback();
+                }
+            ], done);
+        });
     });
 });
