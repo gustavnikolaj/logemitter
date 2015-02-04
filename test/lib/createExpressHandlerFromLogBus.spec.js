@@ -38,7 +38,7 @@ describe('createExpressHandlerFromLogBus', function () {
             url: '/',
             query: {
                 type: 'log',
-                timeout: '1'
+                timeout: '10'
             }
         }, 'to yield a response of', {
             headers: {
