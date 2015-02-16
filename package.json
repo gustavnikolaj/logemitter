@@ -23,7 +23,7 @@
     "unexpected-sinon": "5.0.0"
   },
   "dependencies": {
-    "byline": "4.1.1",
+    "byline": "4.2.1",
     "qs": "2.3.3",
     "request": "2.51.0",
     "util-extend": "1.0.1"
