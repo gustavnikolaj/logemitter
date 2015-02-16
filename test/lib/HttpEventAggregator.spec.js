@@ -10,19 +10,6 @@ var express = require('express');
 
 var extend = require('util-extend');
 
-function printLog(name) {
-    return function (log) {
-        var logCopy = extend({}, log);
-        delete logCopy.type;
-        var message = logCopy.message;
-        delete logCopy.message;
-        var parts = Object.keys(logCopy).map(function (key) {
-            return '' + key + ': ' + logCopy[key];
-        });
-        console.log(name + ': ', [message].concat(parts).join(', '));
-    };
-}
-
 function createExpressApp(middleware, callback) {
     var app = express();
     app.use('/log', middleware);
@@ -186,7 +173,6 @@ describe('lib/HttpEventAggregator', function () {
             var httpEventAggregator = new HttpEventAggregator();
             httpEventAggregator.urls = [ 'http://0.0.0.0:' + port + '/kill' ];
             httpEventAggregator.subscription = { type: 'log' };
-            // httpEventAggregator.on('log', printLog('EXIT1'));
 
             httpEventAggregator.on('log', function (e) {
                 if (e.message === 'Error: socket hang up') {
@@ -201,7 +187,6 @@ describe('lib/HttpEventAggregator', function () {
             var httpEventAggregator = new HttpEventAggregator();
             httpEventAggregator.urls = [ 'http://0.0.0.0:' + port + '/uncaughtexception' ];
             httpEventAggregator.subscription = { type: 'log' };
-            // httpEventAggregator.on('log', printLog('UNCAUGHT'));
 
             httpEventAggregator.on('log', function (e) {
                 if (e.message === 'Error: socket hang up') {
