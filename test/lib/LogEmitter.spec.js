@@ -26,16 +26,26 @@ describe('lib/LogEmitter', function () {
     });
     describe('severity methods', function () {
         ['log', 'info', 'debug', 'error'].forEach(function (severity) {
-            it('.' + severity, function (done) {
-                var logEmitter = new LogEmitter();
-                logEmitter.on('log', function (e) {
-                    expect(e, 'to satisfy', {
-                        severity: severity,
-                        message: 'the log message'
+            describe('.' + severity, function () {
+                it('should emit an event with severity ' + severity, function (done) {
+                    var logEmitter = new LogEmitter();
+                    logEmitter.on('log', function (e) {
+                        expect(e, 'to satisfy', {
+                            severity: severity,
+                            message: 'the log message'
+                        });
+                        done();
                     });
-                    done();
+                    logEmitter[severity]('the log message');
                 });
-                logEmitter[severity]('the log message');
+                it('should take multiple args', function (done) {
+                    var logEmitter = new LogEmitter();
+                    logEmitter.on('log', function (e) {
+                        expect(e, 'to have property', 'message', 'the, log, message');
+                        done();
+                    });
+                    logEmitter[severity]('the', 'log', 'message');
+                });
             });
         });
     });
