@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "coverage": "NODE_ENV=development istanbul cover -x testdata/** --include-all-sources _mocha -- --reporter dot",
+    "coverage": "NODE_ENV=development istanbul cover -x index.js -x testdata/** --include-all-sources _mocha -- --reporter dot",
     "lint": "jshint . && jscs .",
     "test": "mocha"
   },
