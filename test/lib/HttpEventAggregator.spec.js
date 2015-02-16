@@ -8,17 +8,7 @@ var EventEmitter = require('events').EventEmitter;
 var async = require('async');
 var express = require('express');
 
-function extend(origin, add) {
-    // Don't do anything if add isn't an object
-    if (!add || typeof add !== 'object') return origin;
-
-    var keys = Object.keys(add);
-    var i = keys.length;
-    while (i--) {
-        origin[keys[i]] = add[keys[i]];
-    }
-    return origin;
-}
+var extend = require('util-extend');
 
 function printLog(name) {
     return function (log) {
