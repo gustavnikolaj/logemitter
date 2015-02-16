@@ -12,6 +12,18 @@ describe('lib/LogEmitter', function () {
         var logEmitter = new LogEmitter();
         expect(logEmitter, 'to be an', EventEmitter);
     });
+    it('should emit an object when a string is passed as payload', function (done) {
+        var string = 'log message';
+        var logEmitter = new LogEmitter();
+        logEmitter.on('log', function (e) {
+            expect(e, 'to satisfy', {
+                type: 'log',
+                message: 'log message'
+            });
+            done();
+        });
+        logEmitter.emit('log', string);
+    });
     describe('severity methods', function () {
         ['log', 'info', 'debug', 'error'].forEach(function (severity) {
             it('.' + severity, function (done) {
