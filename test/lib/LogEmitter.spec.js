@@ -69,6 +69,19 @@ describe('lib/LogEmitter', function () {
                     });
                     logEmitter[severity]('the', 'log', 'message');
                 });
+                it('should take an object as arg', function (done) {
+                    var logEmitter = new LogEmitter();
+                    logEmitter.on('log', function (e) {
+                        expect(e, 'to equal', {
+                            type: 'log',
+                            severity: severity,
+                            message: 'the log message',
+                            anotherProp: true
+                        });
+                        done();
+                    });
+                    logEmitter[severity]({ message: 'the log message', anotherProp: true });
+                });
             });
         });
     });
