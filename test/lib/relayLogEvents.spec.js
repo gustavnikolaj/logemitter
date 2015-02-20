@@ -2,12 +2,12 @@
 var sinon = require('sinon');
 var expect = require('unexpected')
     .installPlugin(require('unexpected-sinon'));
-var relayEvents = require('../../lib/relayEvents');
+var relayLogEvents = require('../../lib/relayLogEvents');
 var EventEmitter = require('events').EventEmitter;
 
-describe('relayEvents', function () {
+describe('relayLogEvents', function () {
     it('should be a function', function () {
-        expect(relayEvents, 'to be a function');
+        expect(relayLogEvents, 'to be a function');
     });
     it('should relay events from one EventEmitter to another', function (done) {
         var listenerSpy = sinon.spy();
@@ -17,7 +17,7 @@ describe('relayEvents', function () {
 
         firstEmitter.on('someEvent', listenerSpy);
 
-        relayEvents('someEvent', firstEmitter, secondEmitter);
+        relayLogEvents('someEvent', firstEmitter, secondEmitter);
 
         secondEmitter.emit('someEvent', 'someMessage');
         secondEmitter.emit('anotherEvent', 'anotherMessage');
@@ -39,7 +39,7 @@ describe('relayEvents', function () {
         firstEmitter.on('anotherEvent', anotherListenerSpy);
         firstEmitter.on('negativeEvent', negativeListenerSpy);
 
-        relayEvents(/(some|another)Event/, firstEmitter, secondEmitter);
+        relayLogEvents(/(some|another)Event/, firstEmitter, secondEmitter);
 
         secondEmitter.emit('someEvent', 'someMessage');
         secondEmitter.emit('anotherEvent', 'anotherMessage');
@@ -59,7 +59,7 @@ describe('relayEvents', function () {
 
         firstEmitter.on('someEvent', listenerSpy);
 
-        relayEvents('*', firstEmitter, secondEmitter);
+        relayLogEvents('*', firstEmitter, secondEmitter);
 
         secondEmitter.emit('someEvent', 'someMessage');
 

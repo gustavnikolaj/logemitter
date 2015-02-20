@@ -4,7 +4,7 @@ var expect = require('unexpected')
     .installPlugin(require('unexpected-sinon'));
 var LogBus = require('../../lib/LogBus');
 var augmentFunctionWithEventEmitter = require('../../lib/augmentFunctionWithEventEmitter');
-var relayEvents = require('../../lib/relayEvents');
+var relayLogEvents = require('../../lib/relayLogEvents');
 
 describe('augmentFunctionWithEventEmitter', function () {
     it('should return a wrapped function', function () {
@@ -47,7 +47,7 @@ describe('augmentFunctionWithEventEmitter', function () {
             });
         });
 
-        relayEvents('log', logBus, someAsyncTask);
+        relayLogEvents('log', logBus, someAsyncTask);
 
         logBus.subscribe({ type: 'log' }, logSpy);
 
