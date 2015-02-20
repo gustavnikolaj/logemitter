@@ -57,34 +57,16 @@ describe('augmentFunctionWithEventEmitter', function () {
         expect(logSpy, 'was called once');
         expect(logSpy, 'was called with', {
             type: 'log',
+            severity: 'log',
             message: 'starting some async task'
         });
         setImmediate(function () {
             expect(logSpy, 'was called twice');
             expect(logSpy, 'was called with', {
                 type: 'log',
+                severity: 'log',
                 message: 'completed some async task'
             });
-            done();
-        });
-    });
-    it('should allow relayEvents to overwrite the augmented emit method', function (done) {
-        var logBus = new LogBus();
-        var logSpy = sinon.spy();
-
-        var method = augmentFunctionWithEventEmitter(function () {
-            this.emit('foo', 'bar');
-        });
-
-        relayEvents('*', logBus, method); // Subscribing to all events will wrap emit
-
-        logBus.subscribe({ type: 'foo' }, logSpy);
-
-        method();
-
-        setImmediate(function () {
-            expect(logSpy, 'was called once');
-            expect(logSpy, 'was called with', { type: 'foo', message: 'bar' });
             done();
         });
     });
@@ -147,6 +129,109 @@ describe('augmentFunctionWithEventEmitter', function () {
                 type: 'log',
                 severity: 'error',
                 message: 'this is error foobar'
+            });
+        });
+    });
+    describe('features from LogEmitter', function () {
+        describe('baseLogObject', function () {
+            it('should have the getter', function () {
+                var augmentedFunction = augmentFunctionWithEventEmitter(function () {});
+                expect(augmentedFunction.logBaseObject, 'to equal', {
+                    type: 'log',
+                    severity: 'log'
+                });
+            });
+            it('should add basic properties to the emitted object', function (done) {
+                var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                    this.log('test');
+                });
+                augmentedFunction.on('log', function (e) {
+                    expect(e, 'to equal', {
+                        type: 'log',
+                        severity: 'log',
+                        message: 'test'
+                    });
+                    done();
+                });
+                augmentedFunction();
+            });
+            it('should be able to extend the baseLogObject', function (done) {
+                var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                    this.log('test');
+                });
+                augmentedFunction.on('log', function (e) {
+                    expect(e, 'to satisfy', {
+                        message: 'test',
+                        extraAttribute: true
+                    });
+                    done();
+                });
+                augmentedFunction.logBaseObject = {
+                    extraAttribute: true
+                };
+                augmentedFunction();
+            });
+            it('should keep the defaults when adding extra attributes', function (done) {
+                var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                    this.log('test');
+                });
+                augmentedFunction.on('log', function (e) {
+                    expect(e, 'to equal', {
+                        type: 'log',
+                        severity: 'log',
+                        message: 'test',
+                        extraAttribute: true
+                    });
+                    done();
+                });
+                augmentedFunction.logBaseObject = {
+                    extraAttribute: true
+                };
+                augmentedFunction();
+            });
+        });
+        describe('severity methods', function () {
+            ['log', 'info', 'debug', 'error'].forEach(function (severity) {
+                describe('.' + severity, function () {
+                    it('should emit an event with severity ' + severity, function (done) {
+                        var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                            this[severity]('the log message');
+                        });
+                        augmentedFunction.on('log', function (e) {
+                            expect(e, 'to satisfy', {
+                                severity: severity,
+                                message: 'the log message'
+                            });
+                            done();
+                        });
+                        augmentedFunction();
+                    });
+                    it('should take multiple args', function (done) {
+                        var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                            this[severity]('the', 'log', 'message');
+                        });
+                        augmentedFunction.on('log', function (e) {
+                            expect(e, 'to have property', 'message', 'the, log, message');
+                            done();
+                        });
+                        augmentedFunction();
+                    });
+                    it('should take an object as arg', function (done) {
+                        var augmentedFunction = augmentFunctionWithEventEmitter(function () {
+                            this[severity]({ message: 'the log message', anotherProp: true });
+                        });
+                        augmentedFunction.on('log', function (e) {
+                            expect(e, 'to equal', {
+                                type: 'log',
+                                severity: severity,
+                                message: 'the log message',
+                                anotherProp: true
+                            });
+                            done();
+                        });
+                        augmentedFunction();
+                    });
+                });
             });
         });
     });
