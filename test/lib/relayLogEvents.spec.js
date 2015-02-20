@@ -11,61 +11,38 @@ describe('relayLogEvents', function () {
     });
     it('should relay events from one EventEmitter to another', function (done) {
         var listenerSpy = sinon.spy();
+        var firstEmitter = new EventEmitter();
+        var secondEmitter = new EventEmitter();
+
+        firstEmitter.on('log', listenerSpy);
+
+        relayLogEvents(firstEmitter, secondEmitter);
+
+        secondEmitter.emit('log', 'someMessage');
+
+        setImmediate(function () {
+            expect(listenerSpy, 'was called with', 'someMessage');
+            done();
+        });
+    });
+    it('should not relay non-log events', function (done) {
+        var listenerSpy = sinon.spy();
         var anotherListenerSpy = sinon.spy();
         var firstEmitter = new EventEmitter();
         var secondEmitter = new EventEmitter();
 
-        firstEmitter.on('someEvent', listenerSpy);
+        firstEmitter.on('log', listenerSpy);
+        firstEmitter.on('anotherEvent', anotherListenerSpy);
 
-        relayLogEvents('someEvent', firstEmitter, secondEmitter);
+        relayLogEvents(firstEmitter, secondEmitter);
 
-        secondEmitter.emit('someEvent', 'someMessage');
+        secondEmitter.emit('log', 'someMessage');
         secondEmitter.emit('anotherEvent', 'anotherMessage');
 
-        setTimeout(function () {
+        setImmediate(function () {
             expect(listenerSpy, 'was called with', 'someMessage');
             expect(anotherListenerSpy, 'was not called');
             done();
-        }, 1);
-    });
-    it('should relay matched events from one EventEmitter to another', function (done) {
-        var someListenerSpy = sinon.spy();
-        var anotherListenerSpy = sinon.spy();
-        var negativeListenerSpy = sinon.spy();
-        var firstEmitter = new EventEmitter();
-        var secondEmitter = new EventEmitter();
-
-        firstEmitter.on('someEvent', someListenerSpy);
-        firstEmitter.on('anotherEvent', anotherListenerSpy);
-        firstEmitter.on('negativeEvent', negativeListenerSpy);
-
-        relayLogEvents(/(some|another)Event/, firstEmitter, secondEmitter);
-
-        secondEmitter.emit('someEvent', 'someMessage');
-        secondEmitter.emit('anotherEvent', 'anotherMessage');
-        secondEmitter.emit('negativeEvent', 'negativeMessage');
-
-        setTimeout(function () {
-            expect(someListenerSpy, 'was called with', 'someMessage');
-            expect(anotherListenerSpy, 'was called with', 'anotherMessage');
-            expect(negativeListenerSpy, 'was not called');
-            done();
-        }, 1);
-    });
-    it('should relay everything', function (done) {
-        var listenerSpy = sinon.spy();
-        var firstEmitter = new EventEmitter();
-        var secondEmitter = new EventEmitter();
-
-        firstEmitter.on('someEvent', listenerSpy);
-
-        relayLogEvents('*', firstEmitter, secondEmitter);
-
-        secondEmitter.emit('someEvent', 'someMessage');
-
-        setTimeout(function () {
-            expect(listenerSpy, 'was called with', 'someMessage');
-            done();
-        }, 1);
+        });
     });
 });

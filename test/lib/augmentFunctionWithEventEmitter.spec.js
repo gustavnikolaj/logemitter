@@ -47,7 +47,7 @@ describe('augmentFunctionWithEventEmitter', function () {
             });
         });
 
-        relayLogEvents('log', logBus, someAsyncTask);
+        relayLogEvents(logBus, someAsyncTask);
 
         logBus.subscribe({ type: 'log' }, logSpy);
 
