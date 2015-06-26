@@ -129,4 +129,19 @@ describe('lib/LogEmitter', function () {
             logEmitter.emit('log', { message: 'a log message' });
         });
     });
+    describe('.relay', function () {
+        it('relaying events from one emitter to another', function (done) {
+            var logEmitterOne = new LogEmitter();
+            var logEmitterTwo = new LogEmitter();
+
+            logEmitterOne.relay(logEmitterTwo);
+
+            logEmitterTwo.on('log', function (e) {
+                expect(e, 'to have property', 'message', 'hey there!');
+                done();
+            });
+
+            logEmitterOne.log('hey there!');
+        });
+    });
 });
