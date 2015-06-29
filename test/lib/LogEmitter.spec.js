@@ -144,4 +144,66 @@ describe('lib/LogEmitter', function () {
             logEmitterOne.log('hey there!');
         });
     });
+    describe('.augmentFunction', function () {
+        it('should be able to augment a function with LogEmitter behaviour', function (done) {
+            var func = LogEmitter.augmentFunction(function (arg) {
+                this.log({ message: 'was called', value: arg });
+            });
+
+            func.on('log', function (e) {
+                expect(e, 'to equal', {
+                    severity: 'log',
+                    type: 'log',
+                    message: 'was called',
+                    value: 'foobar'
+                });
+                done();
+            });
+
+            func('foobar');
+        });
+        it('should be able to set the logBaseObject', function (done) {
+            var func = LogEmitter.augmentFunction(function (arg) {
+                this.logBaseObject = {
+                    iAm: 'augmented'
+                };
+                this.log({ message: 'was called', value: arg });
+            });
+
+            func.on('log', function (e) {
+                expect(e, 'to equal', {
+                    iAm: 'augmented',
+                    severity: 'log',
+                    type: 'log',
+                    message: 'was called',
+                    value: 'foobar'
+                });
+                done();
+            });
+
+            func('foobar');
+        });
+        it('should be able to relay methods from other logemitters', function (done) {
+            var func = LogEmitter.augmentFunction(function () {
+                this.logBaseObject = {
+                    iAmAugmented: true
+                };
+            });
+            var logEmitter = new LogEmitter();
+            logEmitter.relay(func);
+
+            func.on('log', function (e) {
+                expect(e, 'to equal', {
+                    iAmAugmented: true,
+                    severity: 'log',
+                    type: 'log',
+                    message: 'logged from logEmitter'
+                });
+                done();
+            });
+
+            func();
+            logEmitter.log('logged from logEmitter');
+        });
+    });
 });
