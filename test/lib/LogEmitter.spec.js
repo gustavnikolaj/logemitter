@@ -143,6 +143,24 @@ describe('lib/LogEmitter', function () {
 
             logEmitterOne.log('hey there!');
         });
+        it('should be able to relay methods from augmented functions', function (done) {
+            var func = LogEmitter.augmentFunction(function () {
+                this.log('I was called');
+            });
+            var logEmitter = new LogEmitter();
+            func.relay(logEmitter);
+
+            logEmitter.on('log', function (e) {
+                expect(e, 'to equal', {
+                    severity: 'log',
+                    type: 'log',
+                    message: 'I was called'
+                });
+                done();
+            });
+
+            func();
+        });
     });
     describe('.augmentFunction', function () {
         it('should be able to augment a function with LogEmitter behaviour', function (done) {
