@@ -1,7 +1,6 @@
 /* global describe, it */
 var LogEmitter = require('../../lib/LogEmitter');
 var expect = require('unexpected');
-var async = require('async');
 
 var EventEmitter = require('events').EventEmitter;
 
@@ -25,8 +24,8 @@ describe('lib/LogEmitter', function () {
         });
         logEmitter.emit('log', string);
     });
-    it('should leave non log events alone', function (done) {
-        async.each([
+    describe('non log events', function () {
+        [
             'foo',
             'open',
             'readable',
@@ -34,18 +33,15 @@ describe('lib/LogEmitter', function () {
             'listener',
             'data',
             'info'
-        ], function (eventName, callback) {
-            var logEmitter = new LogEmitter();
-            logEmitter.on(eventName, function (e) {
-                try {
+        ].forEach(function (eventName) {
+            it('should not mess with "' + eventName + '" events', function () {
+                var logEmitter = new LogEmitter();
+                logEmitter.on(eventName, function (e) {
                     expect(e, 'to equal', 'this is the ' + eventName + ' event');
-                } catch (e) {
-                    return callback(e);
-                }
-                callback();
+                });
+                logEmitter.emit(eventName, 'this is the ' + eventName + ' event');
             });
-            logEmitter.emit(eventName, 'this is the ' + eventName + ' event');
-        }, done);
+        });
     });
     describe('severity methods', function () {
         ['log', 'info', 'debug', 'error'].forEach(function (severity) {
