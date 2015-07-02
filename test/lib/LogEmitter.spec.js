@@ -1,8 +1,6 @@
 /* global describe, it */
 var LogEmitter = require('../../lib/LogEmitter');
-var sinon = require('sinon');
-var expect = require('unexpected')
-    .installPlugin(require('unexpected-sinon'));
+var expect = require('unexpected');
 var async = require('async');
 
 var EventEmitter = require('events').EventEmitter;

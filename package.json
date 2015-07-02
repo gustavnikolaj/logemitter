@@ -16,9 +16,7 @@
     "jscs": "1.10.0",
     "jshint": "2.6.0",
     "mocha": "2.1.0",
-    "sinon": "1.12.2",
-    "unexpected": "5.7.0",
-    "unexpected-sinon": "5.0.0"
+    "unexpected": "5.7.0"
   },
   "dependencies": {
     "util-extend": "1.0.1"
