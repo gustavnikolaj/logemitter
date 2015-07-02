@@ -262,28 +262,28 @@ describe('lib/LogEmitter', function () {
                 });
             });
             it('severity "warning" should correspond to the .warn method on the reporter', function () {
-                    var latestLogMessage = null;
-                    var reporter = {};
-                    reporter.warn = function (x) { latestLogMessage = x; };
-                    var logEmitter = new LogEmitter();
-                    logEmitter.report(reporter);
-                    logEmitter.emit('log', {
-                        severity: 'warning',
-                        message: 'foobar'
-                    });
-                    expect(latestLogMessage, 'not to be null');
+                var latestLogMessage = null;
+                var reporter = {};
+                reporter.warn = function (x) { latestLogMessage = x; };
+                var logEmitter = new LogEmitter();
+                logEmitter.report(reporter);
+                logEmitter.emit('log', {
+                    severity: 'warning',
+                    message: 'foobar'
+                });
+                expect(latestLogMessage, 'not to be null');
             });
             it('severity "foobar" should correspond to the .info method on the reporter', function () {
-                    var latestLogMessage = null;
-                    var reporter = {};
-                    reporter.info = function (x) { latestLogMessage = x; };
-                    var logEmitter = new LogEmitter();
-                    logEmitter.report(reporter);
-                    logEmitter.emit('log', {
-                        severity: 'foobar',
-                        message: 'foobar'
-                    });
-                    expect(latestLogMessage, 'not to be null');
+                var latestLogMessage = null;
+                var reporter = {};
+                reporter.info = function (x) { latestLogMessage = x; };
+                var logEmitter = new LogEmitter();
+                logEmitter.report(reporter);
+                logEmitter.emit('log', {
+                    severity: 'foobar',
+                    message: 'foobar'
+                });
+                expect(latestLogMessage, 'not to be null');
             });
         });
         describe('reporting properties', function () {
