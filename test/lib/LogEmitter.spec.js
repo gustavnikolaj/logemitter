@@ -122,6 +122,20 @@ describe('lib/LogEmitter', function () {
             };
             logEmitter.emit('log', { message: 'a log message' });
         });
+        it('should allow a user to overwrite defaults from the logBaseObject', function () {
+            var logEmitter = new LogEmitter();
+            logEmitter.on('log', function (e) {
+                expect(e, 'to satisfy', {
+                    type: 'not a log',
+                    message: 'a log message',
+                    extraAttribute: 'bar'
+                });
+            });
+            logEmitter.logBaseObject = {
+                extraAttribute: 'foo'
+            };
+            logEmitter.emit('log', { type: 'not a log', message: 'a log message', extraAttribute: 'bar' });
+        });
     });
     describe('.relay', function () {
         it('relaying events from one emitter to another', function (done) {
