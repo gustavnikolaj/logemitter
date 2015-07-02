@@ -224,4 +224,99 @@ describe('lib/LogEmitter', function () {
             logEmitter.log('logged from logEmitter');
         });
     });
+    describe('.report', function () {
+        it('should report log lines to the given destination', function () {
+            var latestLogMessage = null;
+            var reporter = {
+                log: function (x) { latestLogMessage = x; }
+            };
+            var logEmitter = new LogEmitter();
+            logEmitter.report(reporter);
+            logEmitter.log('foobar');
+            expect(latestLogMessage, 'to equal', 'foobar');
+        });
+        it('should return a method to stop reporting', function () {
+            var latestLogMessage = null;
+            var reporter = {
+                log: function (x) { latestLogMessage = x; }
+            };
+            var logEmitter = new LogEmitter();
+            var stopReporting = logEmitter.report(reporter);
+            logEmitter.log('foobar');
+            expect(latestLogMessage, 'to equal', 'foobar');
+            stopReporting();
+            logEmitter.log('qux!');
+            expect(latestLogMessage, 'to equal', 'foobar');
+        });
+        describe('supported reporting severities', function () {
+            ['log', 'info', 'warn', 'error'].forEach(function (severity) {
+                it('severity "' + severity + '" should correspond to method .' + severity + ' on the reporter', function () {
+                    var latestLogMessage = null;
+                    var reporter = {};
+                    reporter[severity] = function (x) { latestLogMessage = x; };
+                    var logEmitter = new LogEmitter();
+                    logEmitter.report(reporter);
+                    logEmitter.emit('log', {
+                        severity: severity,
+                        message: 'foobar'
+                    });
+                    expect(latestLogMessage, 'not to be null');
+                });
+            });
+            it('severity "warning" should correspond to the .warn method on the reporter', function () {
+                    var latestLogMessage = null;
+                    var reporter = {};
+                    reporter.warn = function (x) { latestLogMessage = x; };
+                    var logEmitter = new LogEmitter();
+                    logEmitter.report(reporter);
+                    logEmitter.emit('log', {
+                        severity: 'warning',
+                        message: 'foobar'
+                    });
+                    expect(latestLogMessage, 'not to be null');
+            });
+            it('severity "foobar" should correspond to the .info method on the reporter', function () {
+                    var latestLogMessage = null;
+                    var reporter = {};
+                    reporter.info = function (x) { latestLogMessage = x; };
+                    var logEmitter = new LogEmitter();
+                    logEmitter.report(reporter);
+                    logEmitter.emit('log', {
+                        severity: 'foobar',
+                        message: 'foobar'
+                    });
+                    expect(latestLogMessage, 'not to be null');
+            });
+        });
+        describe('reporting properties', function () {
+            [
+                {
+                    input: {
+                        message: 'foo bar',
+                        prop: true
+                    },
+                    expected: 'foo bar prop: true'
+                },
+                {
+                    input: {
+                        message: 'A pretty error message.',
+                        handler: 'test',
+                        method: 'GET'
+                    },
+                    expected: 'A pretty error message. method: GET, handler: test'
+                }
+            ].forEach(function (testCase) {
+                it(testCase.expected, function () {
+                    var latestLogMessage = null;
+                    var reporter = {
+                        log: function (x) { latestLogMessage = x; }
+                    };
+                    var logEmitter = new LogEmitter();
+                    logEmitter.report(reporter);
+                    logEmitter.log(testCase.input);
+                    expect(latestLogMessage, 'to equal', testCase.expected);
+                });
+            });
+        });
+    });
 });
